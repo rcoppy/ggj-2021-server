@@ -1,10 +1,18 @@
 const path = require("path");
 const webpack = require("webpack");
+const nodeExternals = require('webpack-node-externals');
+
+
+const {
+  NODE_ENV = 'production',
+} = process.env;
 
 module.exports = {
-  mode: "development",
+  mode: NODE_ENV,
+  target: "node",
   entry: "./src/index.ts",
   plugins: [new webpack.ProgressPlugin()],
+  externals: [ nodeExternals() ],
 
   module: {
     rules: [
