@@ -2,10 +2,28 @@ import { MapSchema, Schema, type } from "@colyseus/schema";
 
 export class Player extends Schema {
   @type("number")
-  x: number;
+    x: number;
 
   @type("number")
-  y: number;
+    y: number;
+}
+
+export class Hex extends Schema {
+  @type("number")
+    x: number;
+
+  @type("number")
+    y: number;
+
+  @type("number")
+    index: number;
+
+  constructor({ x, y, index }) {
+    super();
+    this.x = x;
+    this.y = y;
+    this.index = index;
+  }
 }
 
 export class MyRoomState extends Schema {
@@ -15,5 +33,8 @@ export class MyRoomState extends Schema {
 
   @type({ map: Player })
     players = new MapSchema<Player>();
+
+  @type({ map: Hex }) 
+    grid = new MapSchema<Hex>();
 
 }
