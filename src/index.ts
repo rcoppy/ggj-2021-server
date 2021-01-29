@@ -19,7 +19,7 @@ const gameServer = new Server({
 });
 
 // register your room handlers
-gameServer.define('my_room', MyRoom);
+gameServer.define('demo', MyRoom);
 
 /**
  * Register @colyseus/social routes
