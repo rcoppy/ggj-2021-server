@@ -15,8 +15,9 @@ app.use(express.json())
 
 const server = http.createServer(app);
 const gameServer = new Server({
-  server,
+  server: server
 });
+
 
 // register your room handlers
 gameServer.define('demo', MyRoom);
