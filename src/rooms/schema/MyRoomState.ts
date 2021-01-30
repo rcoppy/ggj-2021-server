@@ -23,13 +23,13 @@ export class Player extends Schema {
     y: number;
 
   @type("boolean") 
-    clientIsUpdating: boolean;
+    isClientUpdating: boolean;
 
   constructor({ x=0, y=0 }) {
     super();
     this.x = x;
     this.y = y;
-    this.clientIsUpdating = false;
+    this.isClientUpdating = false;
   }
 
   @type({ array: Coordinate })

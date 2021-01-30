@@ -32,6 +32,14 @@ export class InitGridCommand extends Command<MyRoomState, { board: Array<{}> }> 
 
 }
 
+export class UpdateClientStatusCommand extends Command<MyRoomState, { isClientUpdating: boolean, sessionId: string }> {
+
+  execute({ isClientUpdating, sessionId}) {
+    this.state.players.get(sessionId).isClientUpdating = isClientUpdating;
+  }
+
+}
+
 export class MovePlayerCommand extends Command<MyRoomState, { hexIndex: number, sessionId: string }> {
 
   execute({ hexIndex, sessionId }) {
@@ -58,7 +66,7 @@ export class MovePlayerCommand extends Command<MyRoomState, { hexIndex: number, 
 
       player.x = hex.x;
       player.y = hex.y;
-      player.clientIsUpdating = true;
+      player.isClientUpdating = true;
     } else {
       // send some kind of message to player that request was invalid
     }  

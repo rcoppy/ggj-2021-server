@@ -3,7 +3,7 @@ import { MyRoomState } from "./schema/MyRoomState";
 import { Dispatcher } from "@colyseus/command";
 import { defineGrid, extendHex, Grid } from "honeycomb-grid";
 
-import { InitGridCommand, OnJoinCommand, OnLeaveCommand, MovePlayerCommand } from "../Commands";
+import { InitGridCommand, OnJoinCommand, OnLeaveCommand, MovePlayerCommand, UpdateClientStatusCommand } from "../Commands";
 
 import { Constants } from "../Constants";
 
@@ -51,6 +51,13 @@ export class MyRoom extends Room {
     this.onMessage("move_player_to_hex", (client, { hexIndex }) => {
       this.dispatcher.dispatch(new MovePlayerCommand(), {
         hexIndex: hexIndex,
+        sessionId: client.sessionId
+      })
+    });
+
+    this.onMessage("update_client_status", (client, { isClientUpdating }) => {
+      this.dispatcher.dispatch(new UpdateClientStatusCommand(), {
+        isClientUpdating: isClientUpdating,
         sessionId: client.sessionId
       })
     });
