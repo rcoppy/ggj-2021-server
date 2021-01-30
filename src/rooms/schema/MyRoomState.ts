@@ -6,6 +6,12 @@ export class Player extends Schema {
 
   @type("number")
     y: number;
+
+  constructor({ x=0, y=0 }) {
+    super();
+    this.x = x;
+    this.y = y;
+  }
 }
 
 export class Hex extends Schema {
