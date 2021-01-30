@@ -5,6 +5,8 @@ import { defineGrid, extendHex, Grid } from "honeycomb-grid";
 
 import { InitGridCommand, OnJoinCommand, OnLeaveCommand, MovePlayerCommand } from "../Commands";
 
+import { Constants } from "../Constants";
+
 export class MyRoom extends Room {
 
   // dispatcher for command pattern
@@ -20,7 +22,7 @@ export class MyRoom extends Room {
 
   Hex = extendHex();
   Grid = defineGrid(this.Hex);
-  gameBoard = this.Grid.rectangle({ width: 4, height: 4 });
+  gameBoard = this.Grid.rectangle({ width: Constants.gridWidth, height: Constants.gridHeight });
 
   workaroundGridStructurer(grid: Grid) {
     const tupleGrid = [];
