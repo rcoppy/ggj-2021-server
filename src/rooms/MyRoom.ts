@@ -20,14 +20,14 @@ export class MyRoom extends Room {
   // Hex = extendHex(this.hexPrototype);
 
 
-  Hex = extendHex();
-  Grid = defineGrid(this.Hex);
+  CoordHex = extendHex();
+  Grid = defineGrid(this.CoordHex);
   gameBoard = this.Grid.rectangle({ width: Constants.gridWidth, height: Constants.gridHeight });
 
   workaroundGridStructurer(grid: Grid) {
     const tupleGrid = [];
 
-    grid.forEach((hex) => tupleGrid.push({ x: hex.cartesian().x, y: hex.cartesian().y, index: grid.indexOf(hex) }));
+    grid.forEach((hex) => tupleGrid.push({ x: hex.cartesian().x, y: hex.cartesian().y }));
 
     return tupleGrid;
   }
@@ -55,9 +55,9 @@ export class MyRoom extends Room {
       })
     });
 
-    this.onMessage("update_client_status", (client, { isClientUpdating }) => {
+    this.onMessage("update_piece_status", (client, { isPositionUpdating }) => {
       this.dispatcher.dispatch(new UpdateClientStatusCommand(), {
-        isClientUpdating: isClientUpdating,
+        isPositionUpdating: isPositionUpdating,
         sessionId: client.sessionId
       })
     });

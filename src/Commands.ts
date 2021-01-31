@@ -1,7 +1,7 @@
 // OnJoinCommand.ts
 import { Command } from "@colyseus/command";
 
-import { Coordinate, MyRoomState, Player, Hex } from "./rooms/schema/MyRoomState";
+import { Coordinate, MyRoomState, Hex, PlayerState, PlayerPieceFactory } from "./rooms/schema/MyRoomState";
 
 import { IntCoordinate } from "./IntCoordinate";
 import { PathfindingLogic } from "./PathfindingLogic"; 
@@ -10,7 +10,21 @@ import { Constants } from "./Constants";
 export class OnJoinCommand extends Command<MyRoomState, { sessionId: string }> {
 
   execute({ sessionId }) {
-    this.state.players.set(sessionId, new Player({}));
+    const hexGridSize: number = this.state.grid.size;
+    const randomIndex: number = Math.floor(Math.random() * hexGridSize);
+
+    console.log(`random index: ${randomIndex}`);
+    console.log(`test id: ${Array.from(this.state.grid.keys())[randomIndex]}`);
+
+    this.state.playerStates.set(sessionId, new PlayerState({ 
+      pieceOnBoard: PlayerPieceFactory({ tileId: Array.from(this.state.grid.keys())[randomIndex] }) 
+    }));
+
+    const newPiece = this.state.playerStates.get(sessionId).pieceOnBoard;
+
+    this.state.tileOccupants.set(`${newPiece.id}`, newPiece);
+
+    this.state.triggerAll();
   }
 
 }
@@ -18,8 +32,10 @@ export class OnJoinCommand extends Command<MyRoomState, { sessionId: string }> {
 export class OnLeaveCommand extends Command<MyRoomState, { sessionId: string }> {
 
   execute({ sessionId }) {
-    this.state.players.delete(sessionId);
-    console.log(`Players in room: ${this.state.players.size}`);
+    this.state.tileOccupants.delete(`${this.state.playerStates.get(sessionId).pieceOnBoard.id}`);
+    this.state.playerStates.delete(sessionId);
+
+    console.log(`Players in room: ${this.state.playerStates.size}`);
   }
 
 }
@@ -27,20 +43,23 @@ export class OnLeaveCommand extends Command<MyRoomState, { sessionId: string }> 
 export class InitGridCommand extends Command<MyRoomState, { board: Array<{}> }> {
 
   execute({ board }) {
-    board.forEach(hex => this.state.grid.set(hex.index, new Hex({ x: hex.x, y: hex.y, index: hex.index})));
+    board.forEach(hex => {
+      const tile: Hex = new Hex({ x: hex.x, y: hex.y})
+      this.state.grid.set(`${tile.id}`, tile);
+    });
   }
 
 }
 
-export class UpdateClientStatusCommand extends Command<MyRoomState, { isClientUpdating: boolean, sessionId: string }> {
+export class UpdateClientStatusCommand extends Command<MyRoomState, { isPositionUpdating: boolean, sessionId: string }> {
 
-  execute({ isClientUpdating, sessionId}) {
-    this.state.players.get(sessionId).isClientUpdating = isClientUpdating;
+  execute({ isPositionUpdating, sessionId}) {
+    this.state.playerStates.get(sessionId).pieceOnBoard.isPositionUpdating = isPositionUpdating;
   }
 
 }
 
-export class MovePlayerCommand extends Command<MyRoomState, { hexIndex: number, sessionId: string }> {
+export class MovePlayerCommand extends Command<MyRoomState, { hexIndex: string, sessionId: string }> {
 
   execute({ hexIndex, sessionId }) {
     // console.log(`hexIndex: ${hexIndex}`);
@@ -48,7 +67,7 @@ export class MovePlayerCommand extends Command<MyRoomState, { hexIndex: number, 
     const hex = this.state.grid.get(hexIndex);
 
     if (!hex.isOccupied) {
-      const player = this.state.players.get(sessionId);
+      const player = this.state.playerStates.get(sessionId).pieceOnBoard;
 
       const finder = new PathfindingLogic({ width: Constants.gridWidth, height: Constants.gridHeight}); 
 
@@ -58,15 +77,17 @@ export class MovePlayerCommand extends Command<MyRoomState, { hexIndex: number, 
 
       finder.updateObstructions(obstructions);
 
-      const rawPath: Array<IntCoordinate> = finder.generateMovementQueue({ startX: player.x, startY: player.y, endX: hex.x, endY: hex.y });
+      const rawPath: Array<IntCoordinate> = finder.generateMovementQueue({ startX: this.state.grid.get(`${player.tileId}`).x, 
+                                                                           startY: this.state.grid.get(`${player.tileId}`).y, 
+                                                                           endX: hex.x, 
+                                                                           endY: hex.y });
 
       player.moveQueue.clear();
       
       rawPath.forEach(coord => player.moveQueue.push(new Coordinate({x: coord.x, y: coord.y})));
 
-      player.x = hex.x;
-      player.y = hex.y;
-      player.isClientUpdating = true;
+      player.tileId = hexIndex;
+      player.isPositionUpdating = true;
     } else {
       // send some kind of message to player that request was invalid
     }  
