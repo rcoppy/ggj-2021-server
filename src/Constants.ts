@@ -1,5 +1,5 @@
 export enum OccupantTypes {
-    Monster,
+    Monster = 0, // auto-increment; make sure this matches the corresponding enum on the client side
     FinalBoss,
     Player,
     Wall,

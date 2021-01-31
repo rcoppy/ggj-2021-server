@@ -1,7 +1,7 @@
 // OnJoinCommand.ts
 import { Command } from "@colyseus/command";
 
-import { Coordinate, MyRoomState, Hex, PlayerState, PlayerPiece } from "./rooms/schema/MyRoomState";
+import { Coordinate, MyRoomState, Hex, PlayerState, PlayerPieceFactory } from "./rooms/schema/MyRoomState";
 
 import { IntCoordinate } from "./IntCoordinate";
 import { PathfindingLogic } from "./PathfindingLogic"; 
@@ -10,10 +10,21 @@ import { Constants } from "./Constants";
 export class OnJoinCommand extends Command<MyRoomState, { sessionId: string }> {
 
   execute({ sessionId }) {
-    const hexGridSize: number = this.state.grid.keys.length;
+    const hexGridSize: number = this.state.grid.size;
     const randomIndex: number = Math.floor(Math.random() * hexGridSize);
 
-    this.state.playerStates.set(sessionId, new PlayerState({ pieceOnBoard: new PlayerPiece({ tileId: this.state.grid.keys[randomIndex] }) }));
+    console.log(`random index: ${randomIndex}`);
+    console.log(`test id: ${Array.from(this.state.grid.keys())[randomIndex]}`);
+
+    this.state.playerStates.set(sessionId, new PlayerState({ 
+      pieceOnBoard: PlayerPieceFactory({ tileId: Array.from(this.state.grid.keys())[randomIndex] }) 
+    }));
+
+    const newPiece = this.state.playerStates.get(sessionId).pieceOnBoard;
+
+    this.state.tileOccupants.set(`${newPiece.id}`, newPiece);
+
+    this.state.triggerAll();
   }
 
 }
@@ -48,7 +59,7 @@ export class UpdateClientStatusCommand extends Command<MyRoomState, { isPosition
 
 }
 
-export class MovePlayerCommand extends Command<MyRoomState, { hexIndex: number, sessionId: string }> {
+export class MovePlayerCommand extends Command<MyRoomState, { hexIndex: string, sessionId: string }> {
 
   execute({ hexIndex, sessionId }) {
     // console.log(`hexIndex: ${hexIndex}`);

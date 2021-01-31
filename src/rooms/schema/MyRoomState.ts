@@ -20,8 +20,8 @@ export class TileOccupant extends Schema {
   @type("number")
     occupantTypeId: number;
 
-  @type("number")
-    tileId: number;
+  @type("string")
+    tileId: string;
 
   @type("string")
     textDescription: string;
@@ -60,18 +60,13 @@ export class TileOccupant extends Schema {
   }
 }
 
-
-export class PlayerPiece extends TileOccupant {
-  
-  constructor({ tileId=null }) {
-    super({ tileId: tileId, occupantTypeId: OccupantTypes.Player });
-  }
-  
-}
+export function PlayerPieceFactory({ tileId=null }): TileOccupant {
+  return new TileOccupant({tileId: tileId, occupantTypeId: OccupantTypes.Player});
+} 
 
 export class PlayerState extends Schema {
-  @type(PlayerPiece)
-    pieceOnBoard: PlayerPiece;
+  @type(TileOccupant)
+    pieceOnBoard: TileOccupant;
 
   constructor({ pieceOnBoard=null }) {
     super();
