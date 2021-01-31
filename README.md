@@ -1,5 +1,5 @@
 # c# schema gen: 
-`npx schema-codegen ./src/rooms/schema/MyRoomState.ts --output ../ggj-2021-client/Assets/Scripts/ --csharp --namespace Dossamer.Ggj2021`
+`npx schema-codegen ./src/rooms/schema/MyRoomState.ts --output ../ggj-2021-client/Assets/Scripts/Schema --csharp --namespace Dossamer.Ggj2021`
 
 # 🚀 Welcome to your new awesome project!
 
