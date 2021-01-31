@@ -7,7 +7,7 @@ export class PathfindingLogic {
     gridHeight: number;
     grid: any;
 
-    private static options: pathfinding.FinderOptions = { diagonalMovement: pathfinding.DiagonalMovement.Always };
+    private static options: pathfinding.FinderOptions = { diagonalMovement: pathfinding.DiagonalMovement.Never };
 
     private static finder = new pathfinding.AStarFinder(PathfindingLogic.options);
 
