@@ -11,8 +11,8 @@ export enum OccupantTypes {
 }
 
 export class Constants {
-    private static _gridWidth: number = 10;
-    private static _gridHeight: number = 10;
+    private static _gridWidth: number = 40;
+    private static _gridHeight: number = 40;
 
     public static get gridWidth(): number {
         return Constants._gridWidth;

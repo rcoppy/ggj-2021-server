@@ -1,11 +1,15 @@
 import { Room, Client } from "colyseus";
-import { MyRoomState } from "./schema/MyRoomState";
+import { MyRoomState, Hex, TileOccupant } from "./schema/MyRoomState";
 import { Dispatcher } from "@colyseus/command";
 import { defineGrid, extendHex, Grid } from "honeycomb-grid";
 
 import { InitGridCommand, OnJoinCommand, OnLeaveCommand, MovePlayerCommand, UpdateClientStatusCommand } from "../Commands";
 
-import { Constants } from "../Constants";
+import { PathfindingLogic } from "pathfinding";
+import { IntCoordinate } from "../IntCoordinate";
+
+import { Constants, OccupantTypes } from "../Constants";
+import { Queue } from "../Queue";
 
 export class MyRoom extends Room {
 
@@ -34,6 +38,9 @@ export class MyRoom extends Room {
 
   simpleBoard = this.workaroundGridStructurer(this.gameBoard);
 
+  
+
+  // handlers
   onCreate (options: any) {
     this.setState(new MyRoomState());
 
