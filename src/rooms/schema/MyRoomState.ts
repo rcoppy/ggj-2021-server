@@ -15,20 +15,26 @@ export class Coordinate extends Schema {
     }
 }
 
-export class Player extends Schema {
+export class TileOccupant extends Schema {
   @type("number")
     x: number;
 
   @type("number")
     y: number;
 
-  @type("boolean") 
-    isClientUpdating: boolean;
-
   constructor({ x=0, y=0 }) {
     super();
     this.x = x;
     this.y = y;
+  }
+}
+
+export class Player extends TileOccupant {
+  @type("boolean") 
+    isClientUpdating: boolean;
+
+  constructor(options) {
+    super(options);
     this.isClientUpdating = false;
   }
 
@@ -48,6 +54,9 @@ export class Hex extends Schema {
 
   @type("boolean")
     isOccupied: boolean
+
+  @type(TileOccupant)
+    occupant: TileOccupant 
 
   constructor({ x, y, index }) {
     super();
