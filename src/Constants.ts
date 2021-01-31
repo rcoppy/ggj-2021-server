@@ -6,7 +6,8 @@ export enum OccupantTypes {
     Loot,
     Chest,
     Shopkeep,
-    Fire
+    Fire,
+    Blank
 }
 
 export class Constants {
